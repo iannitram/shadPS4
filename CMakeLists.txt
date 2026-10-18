@@ -930,6 +930,10 @@ set(CORE src/core/aerolib/stubs.cpp
          src/core/file_sys/directories/pfs_directory.cpp
          src/core/file_sys/directories/pfs_directory.h
          src/core/file_format/pfs.h
+         src/core/file_format/pkg.cpp
+         src/core/file_format/pkg.h
+         src/core/file_format/pkg_type.cpp
+         src/core/file_format/pkg_type.h
          src/core/file_format/psf.cpp
          src/core/file_format/psf.h
          src/core/file_format/playgo_chunk.cpp
