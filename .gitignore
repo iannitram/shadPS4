@@ -421,3 +421,6 @@ cmake-build-*
 
 # Nix Result symlink
 result
+
+# Public fake-package key sets: generated locally, never committed
+src/core/file_format/pkg_keys.h
