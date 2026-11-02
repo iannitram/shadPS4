@@ -1,4 +1,4 @@
-Stage: Roadmap
+Stage: Dev Loop
 Since: 2026-11-02
 Kind: fork (upstream: shadps4-emu/shadPS4)
 Spec: SPEC.md (ours: upstream's plan + our delta)   Roadmap: ROADMAP.md (ours)   Code map: docs/code-map.md
