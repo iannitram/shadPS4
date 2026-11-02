@@ -120,7 +120,7 @@ Our edits to upstream's files are listed, with why, in `docs/fork-delta.md`. Eve
 
 ## Interlinks
 
-- **The four games** (Uncharted-Universal, Wipeout-Universal, Ratchet-Clank-Universal, TheLastGuardian-Universal; private): each vendors a copy of this subset today (`gpu/shadps4`, The Last Guardian under `port/gpu`), all from upstream `b4e7ae7`, plus its own `shim/` and a C header (`bbgpu.h`, `gow3gpu.h` or `tlggpu.h`). At 1.0 each pins this fork as a submodule at a `gpucore-v*` tag and links `shadps4::gpucore`; their per-game changes move behind the hooks. Their switch-over issues live in each game repo (`ROADMAP.md`, cross-repo notes).
+- **The four games** (Uncharted-Universal, Wipeout-Universal, Ratchet-Clank-Universal, TheLastGuardian-Universal; private): each vendors a copy of this subset today (`gpu/shadps4`, The Last Guardian under `port/gpu`), all from upstream `b4e7ae7`, plus its own `shim/` and a C header (`bbgpu.h`, `gow3gpu.h` or `tlggpu.h`). At 1.0 Uncharted-Universal pins this fork as a submodule at a `gpucore-v*` tag and links `shadps4::gpucore`, its per-game changes behind the hooks; the others (and SotC-Universal, also a PS4 port) may do the same as optional work, or keep and customise their own copy (my ruling, 2026-11-02). Switch-over issues live in each game repo (`ROADMAP.md`, cross-repo notes).
 - **FSR-Vulkan** (public): the games' shared upscaler. It plugs into the core's present path through the hooks; the core does not vendor it.
 - **save-relay**: not needed here (saves belong to the games' runtimes).
 

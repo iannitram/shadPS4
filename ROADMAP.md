@@ -1,6 +1,6 @@
 # Roadmap: our shadPS4 fork to 1.0
 
-1.0 (SPEC.md): the four PS4 games build their graphics from one tagged release of `gpucore/` on Mac, PC and Linux, and `shadps4-pkg` unpacks a self-made package on all three. Upstream's own plan is theirs (SPEC.md); this roadmap covers only our delta. Modules and rules: `docs/code-map.md`. Issue ids below are roadmap ids; each issue's title starts with one.
+1.0 (SPEC.md): a tagged release of `gpucore/` that any PS4 `-universal` game can build from on Mac, PC and Linux, proven by Uncharted-Universal building from it, and `shadps4-pkg` unpacking a self-made package on all three. The other games' switch-overs are optional work in their own repos (my ruling, 2026-11-02). Upstream's own plan is theirs (SPEC.md); this roadmap covers only our delta. Modules and rules: `docs/code-map.md`. Issue ids below are roadmap ids; each issue's title starts with one.
 
 ## Features (1.0)
 
@@ -55,12 +55,12 @@ Each stage lists its issues by roadmap id; numbers and `Blocked by` lines are in
 4. **Core at run time.** C6 host seam; C7 init, resolve, fault, shutdown; C8 hook call sites; C11 render scale and the upscaler hand-off.
 5. **Triage and general fixes.** T1-T4 one triage per game; then F1 shader recompiler, F2 caches and page tracking, F3 Vulkan renderer, F4 command processor and common; C10a-d the general shim pieces (diagnostics, settings store, overlay, movie bridge).
 6. **Extractor on three systems.** E2 the unpacking loop moves out of `main.cpp`; E3b run-time keys in the reader; E4 standalone `shadps4-pkg` on Linux; E5a/E5b generated test packages and the round trip; E6 Windows; E7 macOS.
-7. **Release.** R2 full CI on three systems (Vulkan SDK, MoltenVK); R4 fork-delta check in CI; R5 release tags; R7 our files pass upstream's REUSE check. Cut `gpucore-v0.1.0` when stages 3-4 are merged; the games' switch-overs (G) start from it.
+7. **Release.** R2 full CI on three systems (Vulkan SDK, MoltenVK); R4 fork-delta check in CI; R5 release tags; R7 our files pass upstream's REUSE check. Cut `gpucore-v0.1.0` when stages 3-4 are merged; Uncharted-Universal's switch-over starts from it, and any other game's optional switch-over can too.
 8. **Design pass (last, R04).** Only the in-game overlay (C10c) is UI here; the design pass runs on it, against the one shared design system, and files `design-pass` issues. The extractor is a command-line tool and skips it.
 
 ## Cross-repo notes: what the games need (their own issues, not filed here)
 
-For each of Uncharted-Universal, Wipeout-Universal, Ratchet-Clank-Universal and TheLastGuardian-Universal:
+Uncharted-Universal's switch-over is needed for 1.0 (SPEC.md M8). For Wipeout-Universal, Ratchet-Clank-Universal, TheLastGuardian-Universal and SotC-Universal it is optional work in their own repos, after 1.0; each may keep and customise its own copy instead (my ruling, 2026-11-02). A game that switches does this:
 
 1. **Triage detail:** T1-T4's triage files here list every changed file and mark it general, per-game or dropped (SPEC.md M4). A per-game line names only the file; what the change does and why (shader patches, title checks, menus) is written in the game repo, since it can carry game-binary analysis and this repo is public.
 2. **Move per-game changes behind the hooks** (`shadps4_gpucore_hooks.h`), so the vendored copy holds no per-game edit.
