@@ -10,7 +10,7 @@
 | C | One versioned C interface and config check | M2 | yes | yes | yes |
 | C | Per-game hook table and its call sites; the upscaler hands-off point | M3 | yes | yes | yes |
 | C | Host seam: the loader provides memory, faults, logging | M1 | yes | yes | yes |
-| T, F | The general fixes from the four games' copies, triaged and brought in once | M4 | yes | yes | yes |
+| T, F | The general fixes from Uncharted-Universal's copy (T1) triaged and brought in; the other games' (T2-T4) optional, after 1.0 | M4 | yes | yes | yes |
 | R | Tagged releases, the fork-delta check, our CI on three systems | M5, M6, M9 | yes | yes | yes |
 | E | `shadps4-pkg` and `--extract-pkg` with a run-time key file and generated test packages | M7 | yes | yes | yes |
 | G | Each game switches to the pinned core (game repos' own issues) | M8 | yes | yes | yes |
@@ -53,7 +53,7 @@ Each stage lists its issues by roadmap id; numbers and `Blocked by` lines are in
 2. **Interfaces (Easy, Qwen).** C1 ABI version and config check; C2 hook registry; E1 `shadps4-pkg` command line; E3a key file parser; R3 fork-delta compare.
 3. **Core build on three systems.** C3 the upstream subset compiles into `shadps4_gpucore` on Linux; C4 on Windows (MSVC and MSYS2 clang); C5 on macOS with MoltenVK; C9 the consumer smoke project in CI.
 4. **Core at run time.** C6 host seam; C7 init, resolve, fault, shutdown; C8 hook call sites; C11 render scale and the upscaler hand-off.
-5. **Triage and general fixes.** T1-T4 one triage per game; then F1 shader recompiler, F2 caches and page tracking, F3 Vulkan renderer, F4 command processor and common; C10a-d the general shim pieces (diagnostics, settings store, overlay, movie bridge).
+5. **Triage and general fixes.** T1 Uncharted-Universal's triage (needed for 1.0); T2-T4 one triage per other game, optional and after 1.0, each done when its game chooses to switch over (my ruling, 2026-11-02); then F1 shader recompiler, F2 caches and page tracking, F3 Vulkan renderer, F4 command processor and common; C10a-d the general shim pieces (diagnostics, settings store, overlay, movie bridge).
 6. **Extractor on three systems.** E2 the unpacking loop moves out of `main.cpp`; E3b run-time keys in the reader; E4 standalone `shadps4-pkg` on Linux; E5a/E5b generated test packages and the round trip; E6 Windows; E7 macOS.
 7. **Release.** R2 full CI on three systems (Vulkan SDK, MoltenVK); R4 fork-delta check in CI; R5 release tags; R7 our files pass upstream's REUSE check. Cut `gpucore-v0.1.0` when stages 3-4 are merged; Uncharted-Universal's switch-over starts from it, and any other game's optional switch-over can too.
 8. **Design pass (last, R04).** Only the in-game overlay (C10c) is UI here; the design pass runs on it, against the one shared design system, and files `design-pass` issues. The extractor is a command-line tool and skips it.
