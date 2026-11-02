@@ -1,0 +1,55 @@
+# SPDX-FileCopyrightText: Copyright 2026 shadPS4 fork contributors
+# SPDX-License-Identifier: GPL-2.0-or-later
+
+# Our fork's own CI (SPEC.md M9): the shared graphics core and the package extractor on Linux,
+# Windows and macOS. A public repo, so GitHub-hosted runners only. Upstream's build.yml is theirs.
+name: Fork core
+
+on:
+  push:
+    branches: [main]
+    tags: ["gpucore-v*"]
+  pull_request:
+
+concurrency:
+  group: "${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}"
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  no-game-code:
+    name: No per-game code in the core (M3)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Grep the core for game names and title ids
+        run: |
+          if git grep -n -i -E "uncharted|wipeout|ratchet|guardian|CUSA[0-9]" -- \
+               gpucore src/video_core src/shader_recompiler; then
+            echo "Per-game code belongs in the game repo, behind the hooks (SPEC.md M3)."
+            exit 1
+          fi
+
+  build:
+    name: Core and extractor (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Core
+        shell: bash
+        run: |
+          cmake -S gpucore -B build/gpucore -DCMAKE_BUILD_TYPE=Release
+          cmake --build build/gpucore --config Release --parallel
+          ctest --test-dir build/gpucore -C Release --output-on-failure
+      - name: Extractor
+        shell: bash
+        run: |
+          cmake -S tools/pkg-extract -B build/pkg-extract -DCMAKE_BUILD_TYPE=Release
+          cmake --build build/pkg-extract --config Release --parallel
+          ctest --test-dir build/pkg-extract -C Release --output-on-failure
