@@ -72,7 +72,7 @@ Hook call sites (planned): `patch_shader` where the pipeline cache compiles a gu
 | Path | Owns | Status |
 |---|---|---|
 | `src/core/file_format/pkg.{h,cpp}`, `pkg_type.{h,cpp}` | The package reader restored from upstream 0.7.0 for fake (self-made) packages: OpenSSL/LibreSSL crypto, 64-bit sizes, bad keys or blocks are errors. Keys today come from the git-ignored `pkg_keys.h` | present (Linux) |
-| `src/core/file_format/pkg_keyfile.{h,cpp}` | Parser for the key file read at run time | skeleton |
+| `src/core/file_format/pkg_keyfile.{h,cpp}` | Parser for the key file read at run time | present |
 | `src/core/file_format/pkg_extract.{h,cpp}` | The unpacking loop (worker threads, progress), shared by `--extract-pkg` and `shadps4-pkg` | planned (today it is `RunPkgExtract` in `src/main.cpp`) |
 | `src/main.cpp` | Upstream's CLI plus our `--extract-pkg <pkg>`, `--extract-dir <dir>`, `--extract-threads N` | present (Linux) |
 | `tools/pkg-extract/cli.{h,cpp}` | `shadps4-pkg`'s argument parser | skeleton |
