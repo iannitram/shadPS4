@@ -35,7 +35,7 @@ The library the games link: `add_subdirectory(<fork>/gpucore)`, then `target_lin
 | `gpucore/include/shadps4_gpucore.h` | The C interface: ABI version, config, init, resolve, fault, shutdown | skeleton |
 | `gpucore/include/shadps4_gpucore_host.h` | What the game's loader provides (log, memory protection, guest-to-host): the host seam | skeleton (grows with the host-seam issue) |
 | `gpucore/include/shadps4_gpucore_hooks.h` | The per-game hook table | skeleton |
-| `gpucore/src/gpucore.cpp` | The C interface's implementation | skeleton |
+| `gpucore/src/gpucore.cpp` | The C interface's implementation | ABI and config functions present; the rest skeleton |
 | `gpucore/src/hooks.cpp` | The hook registry | present |
 | `gpucore/src/host/` | General pieces the bbport shims carry today: diagnostics (write log, wait trace, NaN guard), settings store, in-game overlay, movie playback bridge | planned |
 | `gpucore/tests/` | GoogleTest, no GPU needed: every `test_*.cpp` joins `shadps4_gpucore_test`; `abi_c_compile.c` keeps the headers plain C | skeleton (harness runs) |
