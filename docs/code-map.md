@@ -75,7 +75,7 @@ Hook call sites (planned): `patch_shader` where the pipeline cache compiles a gu
 | `src/core/file_format/pkg_keyfile.{h,cpp}` | Parser for the key file read at run time | present |
 | `src/core/file_format/pkg_extract.{h,cpp}` | The unpacking loop (worker threads, progress), shared by `--extract-pkg` and `shadps4-pkg` | planned (today it is `RunPkgExtract` in `src/main.cpp`) |
 | `src/main.cpp` | Upstream's CLI plus our `--extract-pkg <pkg>`, `--extract-dir <dir>`, `--extract-threads N` | present (Linux) |
-| `tools/pkg-extract/cli.{h,cpp}` | `shadps4-pkg`'s argument parser | skeleton |
+| `tools/pkg-extract/cli.{h,cpp}` | `shadps4-pkg`'s argument parser | present |
 | `tools/pkg-extract/main.cpp`, `CMakeLists.txt` | The standalone `shadps4-pkg` binary | skeleton (parses; unpacking not wired) |
 | `tools/pkg-extract/tests/` | GoogleTest: every `test_*.cpp` joins `shadps4_pkg_test`; later a builder that makes test packages from generated keys | skeleton (harness runs) |
 
