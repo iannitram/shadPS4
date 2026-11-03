@@ -103,7 +103,7 @@ Hook call sites (planned): `patch_shader` where the pipeline cache compiles a gu
 | Path | Owns | Status |
 |---|---|---|
 | `docs/fork-delta.md` | The list of upstream files we edit, with why | present |
-| `tools/fork-delta/fork_delta.py` | `parse_listed(markdown)`, `compare(listed, changed)` and the CI entry point | skeleton |
+| `tools/fork-delta/fork_delta.py` | `parse_listed(markdown)`, `compare(listed, changed)` and the CI entry point | present |
 
 `parse_listed` returns the set of paths in the first column of the table under the heading `## Upstream files we edit` (the text inside the first pair of backticks of each row; the header and `|---|` rows are skipped; the table ends at the first line that does not start with `|`). `compare(listed, changed)` drops from `changed` every path that starts with one of `OURS_PREFIXES`, then returns `(unlisted, stale)`: the sorted paths in `changed` but not `listed`, and the sorted paths in `listed` but not `changed`.
 

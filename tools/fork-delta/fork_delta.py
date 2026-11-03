@@ -31,12 +31,31 @@ OURS_PREFIXES = (
 
 def parse_listed(markdown: str) -> set[str]:
     """The paths listed in the '## Upstream files we edit' table of docs/fork-delta.md."""
-    raise NotImplementedError("the fork-delta check issue")
+    lines = markdown.splitlines()
+    if "## Upstream files we edit" not in lines:
+        return set()
+    rows = lines[lines.index("## Upstream files we edit") + 1:]
+    listed = set()
+    in_table = False
+    for line in rows:
+        if not in_table:
+            if line.startswith("## "):
+                return set()
+            if not line.startswith("|"):
+                continue
+            in_table = True
+        elif not line.startswith("|"):
+            break
+        parts = line.split("|")[1].split("`")
+        if len(parts) >= 3:
+            listed.add(parts[1])
+    return listed
 
 
 def compare(listed: set[str], changed: set[str]) -> tuple[list[str], list[str]]:
     """(unlisted, stale): changed upstream files missing from the list, listed files not changed."""
-    raise NotImplementedError("the fork-delta check issue")
+    remaining = {path for path in changed if not path.startswith(OURS_PREFIXES)}
+    return sorted(remaining - listed), sorted(listed - remaining)
 
 
 def main(argv: list[str]) -> int:
