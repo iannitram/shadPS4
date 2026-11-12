@@ -93,7 +93,7 @@ Hook call sites (planned): `patch_shader` where the pipeline cache compiles a gu
 
 1. Split `text` on `\n`; drop one trailing `\r` from each line; trim spaces and tabs from both ends. Skip empty lines and lines starting with `#`. Lines are numbered from 1, counting skipped lines.
 2. Every other line is `name = value` with exactly one `=`; name and value are trimmed. A line with no `=` or more than one is the error `line N: expected name = hex`.
-3. The names are `dk3.modulus`, `dk3.private_exponent`, `fake.modulus`, `fake.private_exponent`; any other is `line N: unknown key name: <name>`. A name given twice is `line N: <name> given twice` (N is the second line).
+3. The names are `dk3.modulus`, `dk3.private_exponent`, `fake.modulus`, `fake.private_exponent`; any other is `line N: unknown key name: <name>`, where `<name>` is shown only if it is 1-32 ASCII letters, digits, `_` or `.`; otherwise it is `<unprintable key name>`. A name given twice is `line N: <name> given twice` (N is the second line).
 4. Each value is exactly 512 hex digits (`0-9`, `a-f`, `A-F`), read as 256 bytes, first byte first; anything else is `line N: <name> must be 512 hex digits`.
 5. At the end, the first missing name in the order of rule 3 is the error `missing key: <name>`.
 6. On an error, `keys` is empty and `error` holds exactly that message; on success `error` is empty.

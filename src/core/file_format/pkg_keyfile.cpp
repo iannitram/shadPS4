@@ -23,6 +23,22 @@ std::string_view Trim(std::string_view s) {
     return s.substr(first, last - first + 1);
 }
 
+// A name is echoed in an error only if it is a short run of name characters. Anything else may be
+// key bytes put on the left of '=' by a malformed line, so it is never shown (rule 9).
+bool IsEchoableName(std::string_view name) {
+    if (name.empty() || name.size() > 32) {
+        return false;
+    }
+    for (const char c : name) {
+        const bool ok = (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') ||
+                        (c >= '0' && c <= '9') || c == '_' || c == '.';
+        if (!ok) {
+            return false;
+        }
+    }
+    return true;
+}
+
 int HexValue(char c) {
     if (c >= '0' && c <= '9') {
         return c - '0';
@@ -96,7 +112,9 @@ ParseResult Parse(std::string_view text) {
             }
         }
         if (index == KeyNames.size()) {
-            return Fail(prefix + "unknown key name: " + std::string(name));
+            const std::string shown =
+                IsEchoableName(name) ? std::string(name) : std::string("<unprintable key name>");
+            return Fail(prefix + "unknown key name: " + shown);
         }
         if (seen[index]) {
             return Fail(prefix + KeyNames[index] + " given twice");
