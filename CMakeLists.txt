@@ -953,6 +953,9 @@ set(CORE src/core/aerolib/stubs.cpp
          src/core/file_format/pfs.h
          src/core/file_format/pkg.cpp
          src/core/file_format/pkg.h
+         # fork: the unpacking loop behind --extract-pkg
+         src/core/file_format/pkg_extract.cpp
+         src/core/file_format/pkg_extract.h
          src/core/file_format/pkg_type.cpp
          src/core/file_format/pkg_type.h
          src/core/file_format/psf.cpp
