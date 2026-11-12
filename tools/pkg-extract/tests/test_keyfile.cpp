@@ -79,6 +79,11 @@ TEST(PkgKeyFile, UnknownName) {
     ExpectError("DK3.modulus = " + Hex(1), "line 1: unknown key name: DK3.modulus");
 }
 
+TEST(PkgKeyFile, UnknownNameThatLooksLikeHexIsNotEchoed) {
+    const std::string hex32 = Hex(1).substr(0, 32);
+    ExpectError(hex32 + " = " + Hex(2), "line 1: unknown key name: <unprintable key name>");
+}
+
 TEST(PkgKeyFile, GivenTwiceNamesTheSecondLine) {
     ExpectError(Full() + "# again\nfake.modulus = " + Hex(9),
                 "line 6: fake.modulus given twice");
