@@ -16,10 +16,27 @@
 #include "common/types.h"
 #include "core/file_format/pkg.h"
 #include "core/file_format/pkg_extract.h"
+#include "core/file_format/pkg_keyfile.h"
 
 // --extract-pkg: unpack a fake .pkg with the package code restored from v.0.7.0.
 int RunPkgExtract(const std::filesystem::path& pkg_path,
-                  const std::optional<std::filesystem::path>& dir, unsigned threads) {
+                  const std::optional<std::filesystem::path>& dir, unsigned threads,
+                  const std::optional<std::filesystem::path>& keys_path) {
+    if (!keys_path) {
+        std::cerr << "missing --extract-keys <file>\n";
+        return 2;
+    }
+    std::string key_text;
+    Common::FS::IOFile keys_file(*keys_path, Common::FS::FileAccessMode::Read);
+    if (keys_file.IsOpen()) {
+        key_text.resize(keys_file.GetSize());
+        keys_file.ReadRaw<char>(key_text.data(), key_text.size());
+    }
+    const auto parsed = PkgKeyFile::Parse(key_text);
+    if (!parsed.keys) {
+        std::cerr << parsed.error << "\n";
+        return 2;
+    }
     PKG pkg;
     std::string failreason;
     std::filesystem::path out = dir.value_or(std::filesystem::path{});
@@ -36,7 +53,7 @@ int RunPkgExtract(const std::filesystem::path& pkg_path,
         return 1;
     }
     std::cout << "Reading " << pkg_path.string() << "\n";
-    if (!pkg.Extract(pkg_path, out, failreason)) {
+    if (!pkg.Extract(pkg_path, out, *parsed.keys, failreason)) {
         LOG_ERROR(Loader, "PKG extract failed: {}", failreason);
         std::cerr << "Unpacking failed: " << failreason << "\n";
         return 1;

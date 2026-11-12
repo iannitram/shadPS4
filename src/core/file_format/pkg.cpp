@@ -23,21 +23,6 @@
 #include "common/io_file.h"
 #include "common/logging/log.h"
 #include "core/file_format/pkg.h"
-// The key sets are not kept in the repository. Generate the file locally from shadPS4
-// v.0.7.0's src/core/crypto/keys.h; without it, --extract-pkg reports that it is missing.
-#if __has_include("core/file_format/pkg_keys.h")
-#include "core/file_format/pkg_keys.h"
-#define PKG_HAVE_KEYS 1
-#else
-#define PKG_HAVE_KEYS 0
-namespace PkgKeys {
-struct PkgDerivedKey3Keyset {
-    static constexpr u8 Modulus[1] = {};
-    static constexpr u8 PrivateExponent[1] = {};
-};
-using FakeKeyset = PkgDerivedKey3Keyset;
-} // namespace PkgKeys
-#endif
 #include "core/file_format/pkg_type.h"
 
 namespace {
@@ -87,15 +72,15 @@ u64 GetPFSCOffset(std::span<const u8> pfs_image) {
 
 /// RSA-2048 decryption with a private key, then PKCS#1 v1.5 (type 2) unpadding. The result
 /// must be exactly `out.size()` bytes, as every key the package format stores is.
-template <typename Keyset>
-bool RSA2048Decrypt(std::span<u8> out, std::span<const u8, 256> cipher) {
+bool RSA2048Decrypt(std::span<u8> out, std::span<const u8, 256> cipher,
+                    const PkgKeyFile::Rsa2048& modulus,
+                    const PkgKeyFile::Rsa2048& private_exponent) {
     std::unique_ptr<BN_CTX, decltype(&BN_CTX_free)> ctx(BN_CTX_new(), BN_CTX_free);
     std::unique_ptr<BIGNUM, decltype(&BN_free)> c(BN_bin2bn(cipher.data(), 256, nullptr),
                                                   BN_free);
-    std::unique_ptr<BIGNUM, decltype(&BN_free)> n(
-        BN_bin2bn(Keyset::Modulus, sizeof(Keyset::Modulus), nullptr), BN_free);
-    std::unique_ptr<BIGNUM, decltype(&BN_free)> d(
-        BN_bin2bn(Keyset::PrivateExponent, sizeof(Keyset::PrivateExponent), nullptr), BN_free);
+    std::unique_ptr<BIGNUM, decltype(&BN_free)> n(BN_bin2bn(modulus.data(), 256, nullptr), BN_free);
+    std::unique_ptr<BIGNUM, decltype(&BN_free)> d(BN_bin2bn(private_exponent.data(), 256, nullptr),
+                                                  BN_free);
     std::unique_ptr<BIGNUM, decltype(&BN_free)> m(BN_new(), BN_free);
     if (!ctx || !c || !n || !d || !m || BN_mod_exp(m.get(), c.get(), d.get(), n.get(), ctx.get()) != 1) {
         return false;
@@ -207,13 +192,7 @@ s64 PKG::GetFileSize(int index) const {
 }
 
 bool PKG::Extract(const std::filesystem::path& filepath, const std::filesystem::path& extract,
-                  std::string& failreason) {
-    if (!PKG_HAVE_KEYS) {
-        failreason = "This build has no src/core/file_format/pkg_keys.h (the key sets are not "
-                     "kept in the repository); generate it from shadPS4 v.0.7.0's "
-                     "src/core/crypto/keys.h and rebuild";
-        return false;
-    }
+                  const PkgKeyFile::Keys& keys, std::string& failreason) {
     extract_path = extract;
     pkgpath = filepath;
     Common::FS::IOFile file(filepath, Common::FS::FileAccessMode::Read);
@@ -269,8 +248,8 @@ bool PKG::Extract(const std::filesystem::path& filepath, const std::filesystem::
         if (entry.id == 0x10) { // ENTRY_KEYS: seed digest, 7 digests, 7 keys; key 3 is DK3
             constexpr size_t key3 = 32 + 7 * 32 + 3 * 256;
             if (data.size() < key3 + 256 ||
-                !RSA2048Decrypt<PkgKeys::PkgDerivedKey3Keyset>(
-                    dk3_, std::span<const u8, 256>(data.data() + key3, 256))) {
+                !RSA2048Decrypt(dk3_, std::span<const u8, 256>(data.data() + key3, 256),
+                                   keys.dk3_modulus, keys.dk3_private_exponent)) {
                 failreason = "The PKG's entry key does not open with the fake-package key set "
                              "(not a fake package?)";
                 return false;
@@ -285,8 +264,8 @@ bool PKG::Extract(const std::filesystem::path& filepath, const std::filesystem::
             const auto ivkey = EntryIvKey(entry, dk3_);
             std::array<u8, 256> imgKey{};
             if (!AesCbcDecrypt(ivkey, imgkeydata, imgKey) ||
-                !RSA2048Decrypt<PkgKeys::FakeKeyset>(ekpfsKey,
-                                                     std::span<const u8, 256>(imgKey))) {
+                !RSA2048Decrypt(ekpfsKey, std::span<const u8, 256>(imgKey), keys.fake_modulus,
+                                keys.fake_private_exponent)) {
                 failreason = "The PKG's image key does not open with the fake-package key set";
                 return false;
             }

@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 
 // PS4 .pkg unpacking, restored from shadPS4 v.0.7.0 (removed upstream as dead code in #2702).
-// Fake packages only: the keys are the public key sets in pkg_keys.h. CryptoPP is replaced by
-// the OpenSSL/LibreSSL calls the rest of the emulator already links.
+// Fake packages only: the keys come from the user's key file at run time (PkgKeyFile). CryptoPP
+// is replaced by the OpenSSL/LibreSSL calls the rest of the emulator already links.
 
 #pragma once
 
@@ -14,6 +14,7 @@
 #include <vector>
 #include "common/endian.h"
 #include "core/file_format/pfs.h"
+#include "core/file_format/pkg_keyfile.h"
 
 struct PKGHeader {
     u32_be magic; // Magic
@@ -96,7 +97,7 @@ public:
     /// Reads the header, the sce_sys entries and the PFS directory tree; creates the folders
     /// under `extract`. The files themselves are written by ExtractFiles.
     bool Extract(const std::filesystem::path& filepath, const std::filesystem::path& extract,
-                 std::string& failreason);
+                 const PkgKeyFile::Keys& keys, std::string& failreason);
     /// Writes file number `index` (0 .. GetNumberOfFiles() - 1). Safe to call from several
     /// threads at once, each with a different index. Returns false on a read or decode error.
     bool ExtractFiles(int index, std::string& failreason);

@@ -7,4 +7,5 @@
 #include <optional>
 
 int RunPkgExtract(const std::filesystem::path& pkg_path,
-                  const std::optional<std::filesystem::path>& dir, unsigned threads);
+                  const std::optional<std::filesystem::path>& dir, unsigned threads,
+                  const std::optional<std::filesystem::path>& keys_path);
