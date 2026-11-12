@@ -12,7 +12,10 @@ include(GoogleTest)
 
 # Every tests/test_*.cpp joins the one test binary: a new test file needs no CMake change.
 file(GLOB SHADPS4_PKG_TEST_SOURCES CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/test_*.cpp")
-add_executable(shadps4_pkg_test ${SHADPS4_PKG_TEST_SOURCES})
+# The test package builder is test-only and reads the reader's structs from src/ (headers only).
+add_executable(shadps4_pkg_test ${SHADPS4_PKG_TEST_SOURCES} pkg_builder.cpp)
+target_include_directories(shadps4_pkg_test PRIVATE "${SHADPS4_ROOT}/src")
+target_compile_features(shadps4_pkg_test PRIVATE cxx_std_23)
 target_link_libraries(shadps4_pkg_test PRIVATE shadps4_pkg_cli shadps4_pkg_keyfile GTest::gtest_main)
 gtest_discover_tests(shadps4_pkg_test)
 
