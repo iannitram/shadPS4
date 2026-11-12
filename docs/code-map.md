@@ -40,6 +40,7 @@ The library the games link: `add_subdirectory(<fork>/gpucore)`, then `target_lin
 | `gpucore/src/host/` | General pieces the bbport shims carry today: diagnostics (write log, wait trace, NaN guard), settings store, in-game overlay, movie playback bridge | planned |
 | `gpucore/tests/` | GoogleTest, no GPU needed: every `test_*.cpp` joins `shadps4_gpucore_test`; `abi_c_compile.c` keeps the headers plain C | skeleton (harness runs) |
 | `gpucore/tests/consumer/` | A tiny project that consumes the core exactly as a game does | planned |
+| `docs/gpucore-triage/uncharted.md` | M4 triage of Uncharted-Universal's shadPS4 copy: every changed file marked general, per-game or dropped (#17) | present |
 
 **ABI version and config check** (`shadps4_gpucore_abi_version`, `shadps4_gpucore_version_string`, `shadps4_gpucore_check_config`):
 
