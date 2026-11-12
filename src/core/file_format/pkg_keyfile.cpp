@@ -23,20 +23,26 @@ std::string_view Trim(std::string_view s) {
     return s.substr(first, last - first + 1);
 }
 
-// A name is echoed in an error only if it is a short run of name characters. Anything else may be
-// key bytes put on the left of '=' by a malformed line, so it is never shown (rule 9).
+// A name is echoed in an error only if it is a short run of name characters that contains at least
+// one character outside 0-9a-fA-F (code-map, Key file, rule 3).
 bool IsEchoableName(std::string_view name) {
     if (name.empty() || name.size() > 32) {
         return false;
     }
+    bool has_non_hex = false;
     for (const char c : name) {
         const bool ok = (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') ||
                         (c >= '0' && c <= '9') || c == '_' || c == '.';
         if (!ok) {
             return false;
         }
+        const bool is_hex =
+            (c >= '0' && c <= '9') || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F');
+        if (!is_hex) {
+            has_non_hex = true;
+        }
     }
-    return true;
+    return has_non_hex;
 }
 
 int HexValue(char c) {
