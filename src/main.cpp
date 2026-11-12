@@ -111,11 +111,13 @@ int main(int argc, char* argv[]) {
 
     std::optional<std::filesystem::path> extractPkg;
     std::optional<std::filesystem::path> extractDir;
+    std::optional<std::filesystem::path> extractKeys;
     unsigned extractThreads = 4;
     app.add_option("--extract-pkg", extractPkg, "Unpack a fake PS4 .pkg and exit")
         ->check(CLI::ExistingFile);
     app.add_option("--extract-dir", extractDir,
                    "Folder to unpack into (default: ./<title id>); must be empty or absent");
+    app.add_option("--extract-keys", extractKeys, "Your own key file for --extract-pkg");
     app.add_option("--extract-threads", extractThreads, "Files unpacked at once (default 4)")
         ->check(CLI::Range(1u, 32u));
 
@@ -166,7 +168,7 @@ int main(int argc, char* argv[]) {
 
     // fork: the unpacking loop lives in core/file_format/pkg_extract
     if (extractPkg) {
-        return RunPkgExtract(*extractPkg, extractDir, extractThreads);
+        return RunPkgExtract(*extractPkg, extractDir, extractThreads, extractKeys);
     }
 
     IPC::Instance().Init();
