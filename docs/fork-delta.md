@@ -6,6 +6,6 @@ Every upstream file that differs from upstream's main, with why, so the daily up
 
 | Path | Why |
 |---|---|
-| `src/main.cpp` | The `--extract-pkg`, `--extract-dir` and `--extract-threads` options and the unpacking call |
-| `CMakeLists.txt` | Adds our package reader files to the `CORE` source list |
+| `src/main.cpp` | The `--extract-pkg`, `--extract-dir` and `--extract-threads` options and the one call into `core/file_format/pkg_extract` (the unpacking loop lives there) |
+| `CMakeLists.txt` | Adds our package reader and unpacking files to the `CORE` source list |
 | `.gitignore` | Ignores `src/core/file_format/pkg_keys.h` (key sets never enter the repo) |
