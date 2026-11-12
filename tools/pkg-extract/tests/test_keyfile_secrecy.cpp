@@ -102,3 +102,14 @@ TEST(PkgKeyFileSecrecy, UnknownNameLengthLimitIs32) {
     EXPECT_EQ(hidden.error, "line 1: unknown key name: <unprintable key name>");
     ExpectNoKeyMaterial(hidden.error, name33);
 }
+
+TEST(PkgKeyFileSecrecy, EmptySpacedAndNonAsciiNamesAreNotEchoed) {
+    // Empty, whitespace-containing and UTF-8 names are outside the echo rule and are never shown.
+    const std::string odd_names[] = {"", "foo bar", std::string("caf\xc3\xa9", 5),
+                                     std::string("k\x80y", 3)};
+    for (const std::string& name : odd_names) {
+        const auto r = Parse(name + " = " + Hex(1) + "\n");
+        ASSERT_FALSE(r.keys.has_value());
+        EXPECT_EQ(r.error, "line 1: unknown key name: <unprintable key name>");
+    }
+}
