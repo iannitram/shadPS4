@@ -73,3 +73,32 @@ TEST(PkgKeyFileSecrecy, GivenTwiceErrorDoesNotEchoTheSecondValue) {
     ExpectNoKeyMaterial(r.error, first);
     ExpectNoKeyMaterial(r.error, second);
 }
+
+TEST(PkgKeyFileSecrecy, UnknownNameWithKeyHexIsNotEchoed) {
+    // 64 hex digits on the left of '=': all letters and digits, so only the length rule rejects it.
+    const std::string key_hex = Hex(1).substr(0, 64);
+    const auto r = Parse(key_hex + " = " + Hex(2) + "\n");
+    ASSERT_FALSE(r.keys.has_value());
+    EXPECT_EQ(r.error, "line 1: unknown key name: <unprintable key name>");
+    ExpectNoKeyMaterial(r.error, key_hex);
+}
+
+TEST(PkgKeyFileSecrecy, ShortUnknownNameIsEchoed) {
+    const auto r = Parse("foo_bar = " + Hex(1) + "\n");
+    ASSERT_FALSE(r.keys.has_value());
+    EXPECT_EQ(r.error, "line 1: unknown key name: foo_bar");
+}
+
+TEST(PkgKeyFileSecrecy, UnknownNameLengthLimitIs32) {
+    const std::string name32 = "abcdefghijklmnopqrstuvwxyz012345";
+    ASSERT_EQ(name32.size(), 32u);
+    const auto echoed = Parse(name32 + " = " + Hex(1) + "\n");
+    ASSERT_FALSE(echoed.keys.has_value());
+    EXPECT_EQ(echoed.error, "line 1: unknown key name: " + name32);
+
+    const std::string name33 = name32 + "6";
+    const auto hidden = Parse(name33 + " = " + Hex(1) + "\n");
+    ASSERT_FALSE(hidden.keys.has_value());
+    EXPECT_EQ(hidden.error, "line 1: unknown key name: <unprintable key name>");
+    ExpectNoKeyMaterial(hidden.error, name33);
+}
