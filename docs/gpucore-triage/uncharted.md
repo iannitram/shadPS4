@@ -3,7 +3,7 @@
 - **Vendor base:** shadPS4 `b4e7ae7` (`shadps4-emu/shadPS4`, 2026-10-02).
 - **Copy read:** Uncharted-Universal `d7841aed7b9740430881abb03ad99a68158f05c1` (`main`, 2026-11-12), folder `gpu/shadps4/` (maps to `src/`), plus `gpu/third_party/{gcn,sirit,half}` (map to `externals/`).
 - **Upstream checked:** `upstream/main` as fetched 2026-11-12 (tip dated 2026-11-10).
-- **Counts:** 192 files listed: **138 general**, **22 per-game**, **32 dropped**. Nothing is left unclassified.
+- **Counts:** 192 files listed: **140 general**, **22 per-game**, **30 dropped**. Nothing is left unclassified.
 - **Marks:** *general* = comes into the core (the note says what it does); *per-game* = moves behind a hook table entry, the callback living in the game repo; *dropped* = upstream main already has it (the note names the commit).
 - **Per-game details** are not here (this repo is public); they are in Uncharted-Universal, `docs/shadps4-triage.md`, which also lists the per-game parts inside the "general" files marked below.
 
@@ -77,8 +77,8 @@
 | `src/shader_recompiler/backend/spirv/spirv_emit_context.cpp` | general | Motion-vector varyings and output attachment, two extra push-constant members (motion param, scene size) and workgroup-split setup for compute. |
 | `src/shader_recompiler/backend/spirv/spirv_emit_context.h` | general | Adds motion-vector ids and predicates, and the compute workgroup split factor, to the emit context. |
 | `src/shader_recompiler/frontend/control_flow_graph.cpp` | general | Ends an EXEC-masked divergence scope before a whole-wave scalar ALU op and resumes it afterwards, so waterfall-style loops see the scalar result. |
-| `src/shader_recompiler/frontend/decode.h` | dropped | c6b24ec1c74647c89b562b78b1aa06f576204dbb video_core: Renderer optimizations pt1 (#5112) |
-| `src/shader_recompiler/frontend/fetch_shader.cpp` | dropped | c6b24ec1c74647c89b562b78b1aa06f576204dbb video_core: Renderer optimizations pt1 (#5112) |
+| `src/shader_recompiler/frontend/decode.h` | general | Adds a position() accessor on the instruction slice, used by the fetch-shader parse cache (only needed if that cache is kept). Not in upstream main; #5112 (already in the base) does not carry it. |
+| `src/shader_recompiler/frontend/fetch_shader.cpp` | general | Per-thread parse cache for fetch shaders, and user data read through the snapshot accessor that the info.h change adds (that one-line change must come with info.h). The base already has the #5112 parsing optimisations; whether the cache is still worth keeping is decided at port time. |
 | `src/shader_recompiler/frontend/format.cpp` | dropped | 6752d8b19ec5e7f68302e7b5bebedf5447c78eac shader_recompiler: Handle buffer cache invalidation instructions (#5447) |
 | `src/shader_recompiler/frontend/translate/scalar_alu.cpp` | dropped | 282e5c792b9f9b4c3328d41785a9b39b5b722eb9 shader_recompiler: Set SCC carry-out on S_ADDC_U32 (#5030); e518a65157b04d0cefec9930e31a86c5685af28e Fix S_SUBB_U32 SCC wrap (#5031) |
 | `src/shader_recompiler/frontend/translate/scalar_memory.cpp` | per-game | Details in Uncharted-Universal. |
