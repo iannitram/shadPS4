@@ -15,3 +15,5 @@ This fork is the shared PS4 graphics core my PS4 game ports build from, plus the
 9. **Never post upstream.** Upstream asks for no AI-written contributions: push only to this fork (`origin`); no PRs, issues, comments or reports on shadps4-emu.
 10. **No game files, keys or firmware**, ever: not in code, tests, logs, issues or releases. Tests build their own packages from keys they generate.
 11. **No private details** in code, commits or PR text: no names, e-mail addresses, home paths or machine names. Commit as the no-reply identity.
+
+**Upstream and peers:** see `PEERS.md` at the repo root. When I say "upstream", I mean the repo in its Upstream section; reuse a peer's code only as that file allows.
